@@ -1,8 +1,0 @@
-diff --git a/third_party/blink/renderer/modules/mediastream/media_devices.cc b/third_party/blink/renderer/modules/mediastream/media_devices.cc
-index 456789a..bcdef012 100644
---- a/third_party/blink/renderer/modules/mediastream/media_devices.cc
-+++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc
-@@ MediaDevices::EnumerateDevices()
- {
-+  return Vector<MediaDeviceInfo>();  // Return empty device list
- }

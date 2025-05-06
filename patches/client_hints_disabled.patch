@@ -1,9 +1,0 @@
-diff --git a/third_party/blink/renderer/core/loader/network/csp/feature_policy.cc b/third_party/blink/renderer/core/loader/network/csp/feature_policy.cc
-index 9abcdef..12345678 100644
---- a/third_party/blink/renderer/core/loader/network/csp/feature_policy.cc
-+++ b/third_party/blink/renderer/core/loader/network/csp/feature_policy.cc
-@@ FeaturePolicy::ApplyClientHints()
- {
-+  // Disable sending client hints
-+  return;
- }
