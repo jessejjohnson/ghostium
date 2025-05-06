@@ -18,11 +18,11 @@ ulimit -n 1000000
 # Install depot_tools
 cd ~
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-echo "export PATH=\$PATH:$HOME/depot_tools" >> ~/.bashrc
+echo "export PATH="${HOME}/depot_tools:$PATH"" >> ~/.bashrc
 source ~/.bashrc
 
 # Fetch Chromium
-mkdir -p ~/chromium && cd ~/chromium
-fetch --nohooks chromium
+cd ~/chromium
+fetch --nohooks --no-history chromium
 cd src
 gclient sync
