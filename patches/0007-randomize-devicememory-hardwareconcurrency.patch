@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/frame/navigator_base.cc b/third_party/blink/renderer/core/frame/navigator_base.cc
+index 012345..6789ab 100644
+--- a/third_party/blink/renderer/core/frame/navigator_base.cc
++++ b/third_party/blink/renderer/core/frame/navigator_base.cc
+@@ uint64_t NavigatorBase::deviceMemory() const {
+-  return 8;
++  return 4 + (rand() % 5); // Random between 4 and 8
+}
+@@ uint64_t NavigatorBase::hardwareConcurrency() const {
+-  return base::SysInfo::NumberOfProcessors();
++  return 4 + (rand() % 5);
+}

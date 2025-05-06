@@ -1,0 +1,8 @@
+diff --git a/v8/src/objects/js-error.cc b/v8/src/objects/js-error.cc
+index deadbeef..feedface 100644
+--- a/v8/src/objects/js-error.cc
++++ b/v8/src/objects/js-error.cc
+@@ std::string Error::ToString() const {
+-  // Automation detection artifacts exposed here
++  return "Error at anonymous function (https://example.com/script.js:1:1)";
+}

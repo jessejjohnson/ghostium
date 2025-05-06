@@ -1,0 +1,8 @@
+diff --git a/third_party/blink/renderer/modules/permissions/permissions.cc b/third_party/blink/renderer/modules/permissions/permissions.cc
+index 123abc..789def 100644
+--- a/third_party/blink/renderer/modules/permissions/permissions.cc
++++ b/third_party/blink/renderer/modules/permissions/permissions.cc
+@@ bool Permissions::query() const {
+-  // original permission query behavior
++  return PermissionStatus::GRANTED;
+}

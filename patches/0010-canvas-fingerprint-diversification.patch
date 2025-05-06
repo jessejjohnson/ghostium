@@ -1,0 +1,30 @@
+diff --git a/third_party/blink/renderer/modules/canvas/html/html_canvas_element.cc b/third_party/blink/renderer/modules/canvas/html/html_canvas_element.cc
+index 654321..789abc 100644
+--- a/third_party/blink/renderer/modules/canvas/html/html_canvas_element.cc
++++ b/third_party/blink/renderer/modules/canvas/html/html_canvas_element.cc
+@@
++#include <cstdlib>
++
++namespace {
++    bool ShouldDiversifyCanvas() {
++        return true; // Always diversify; could randomize based on profile if needed
++    }
++
++    void AddCanvasNoise(unsigned char* pixel_data, int length) {
++        for (int i = 0; i < length; i += 4) { // RGBA stride
++            pixel_data[i] = pixel_data[i] + (rand() % 2);     // R
++            pixel_data[i+1] = pixel_data[i+1] + (rand() % 2); // G
++            pixel_data[i+2] = pixel_data[i+2] + (rand() % 2); // B
++            // Alpha channel left untouched
++        }
++    }
++}
+@@ void HTMLCanvasElement::ToDataURL(...) const {
+-  return backing_store_->ToDataURL(...);
++  if (ShouldDiversifyCanvas()) {
++      unsigned char* pixel_data = backing_store_->GetPixelData();
++      int length = backing_store_->GetDataSize();
++      AddCanvasNoise(pixel_data, length);
++  }
++  return backing_store_->ToDataURL(...);
+}

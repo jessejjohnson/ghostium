@@ -1,0 +1,37 @@
+diff --git a/third_party/blink/renderer/core/input/input_dispatcher.cc b/third_party/blink/renderer/core/input/input_dispatcher.cc
+index 1a2b3c4..5d6e7f8 100644
+--- a/third_party/blink/renderer/core/input/input_dispatcher.cc
++++ b/third_party/blink/renderer/core/input/input_dispatcher.cc
+@@
++#include <cstdlib>
++#include <chrono>
++#include <thread>
++
++namespace {
++    // Inject a small random delay into dispatching events
++    void MaybeInjectTimingRandomness() {
++        int jitter = rand() % 10; // Random 0–9 ms delay
++        if (jitter > 0) {
++            std::this_thread::sleep_for(std::chrono::milliseconds(jitter));
++        }
++    }
++
++    // Randomize event order slightly (if multiple pending)
++    bool ShouldShuffleEventOrder() {
++        return (rand() % 100) < 10; // 10% chance
++    }
++}
++
+ void InputDispatcher::DispatchEvent(Event* event) {
++  // Inject slight randomness to all user-triggered input events
++  if (event->IsUserGestureEvent()) {
++      MaybeInjectTimingRandomness();
++  }
++
++  // If synthetic event, randomize even more
++  if (event->IsSyntheticEvent() && ShouldShuffleEventOrder()) {
++      std::this_thread::sleep_for(std::chrono::milliseconds(10 + (rand() % 20)));
++  }
++
+   original_dispatch(event); // existing call
+ }

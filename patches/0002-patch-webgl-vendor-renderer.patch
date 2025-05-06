@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
+index 654321..789abc 100644
+--- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
+@@ std::string WebGLRenderingContextBase::GetUnmaskedVendor() const {
+-  return original_vendor;
++  return "NVIDIA Corporation";
+}
+@@ std::string WebGLRenderingContextBase::GetUnmaskedRenderer() const {
+-  return original_renderer;
++  return "NVIDIA GeForce RTX 3080/PCIe/SSE2";
+}
