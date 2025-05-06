@@ -54,7 +54,7 @@ configure:
 .PHONY: compile
 compile:
 	@echo "=== Compiling Chromium ==="
-	cd $(CHROMIUM_DIR) && ninja -C out/Default chrome
+	cd $(CHROMIUM_DIR) && autoninja -C out/Default chrome
 
 # Full build sequence
 .PHONY: build
