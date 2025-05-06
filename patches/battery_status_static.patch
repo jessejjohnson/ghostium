@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/modules/battery/battery_manager.cc b/third_party/blink/renderer/modules/battery/battery_manager.cc
+index 56789ab..cdef0123 100644
+--- a/third_party/blink/renderer/modules/battery/battery_manager.cc
++++ b/third_party/blink/renderer/modules/battery/battery_manager.cc
+@@ BatteryManager::GetBatteryStatus()
+ {
++  BatteryStatus battery;
++  battery.charging = true;
++  battery.level = 1.0;
++  battery.chargingTime = 0;
++  battery.dischargingTime = std::numeric_limits<double>::infinity();
++  return battery;
+ }

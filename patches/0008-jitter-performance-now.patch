@@ -1,9 +1,0 @@
-diff --git a/third_party/blink/renderer/core/timing/performance.cc b/third_party/blink/renderer/core/timing/performance.cc
-index abcd12..ef3456 100644
---- a/third_party/blink/renderer/core/timing/performance.cc
-+++ b/third_party/blink/renderer/core/timing/performance.cc
-@@ double Performance::now() {
--  return base::TimeTicks::Now() - time_origin_;
-+  double jitter = (rand() % 10) / 1000.0; // 0 to 0.009 seconds
-+  return (base::TimeTicks::Now() - time_origin_).InMillisecondsF() + jitter;
-}

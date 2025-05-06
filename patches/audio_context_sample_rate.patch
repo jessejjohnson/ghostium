@@ -1,0 +1,8 @@
+diff --git a/third_party/blink/renderer/modules/webaudio/audio_context.cc b/third_party/blink/renderer/modules/webaudio/audio_context.cc
+index 3456789..abcdef01 100644
+--- a/third_party/blink/renderer/modules/webaudio/audio_context.cc
++++ b/third_party/blink/renderer/modules/webaudio/audio_context.cc
+@@ AudioContext::AudioContext(...)
+ {
++  sample_rate_ = 44100.0;  // Force constant rate
+ }

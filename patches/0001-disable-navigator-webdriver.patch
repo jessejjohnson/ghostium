@@ -1,8 +1,0 @@
-diff --git a/third_party/blink/renderer/core/frame/navigator_base.cc b/third_party/blink/renderer/core/frame/navigator_base.cc
-index abc123..def456 100644
---- a/third_party/blink/renderer/core/frame/navigator_base.cc
-+++ b/third_party/blink/renderer/core/frame/navigator_base.cc
-@@ bool NavigatorBase::webdriver() const {
--  return GetExecutionContext()->IsWindowInteractionEnabled();
-+  return false;
-}

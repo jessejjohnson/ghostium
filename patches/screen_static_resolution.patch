@@ -1,0 +1,19 @@
+diff --git a/third_party/blink/renderer/core/display/screen.cc b/third_party/blink/renderer/core/display/screen.cc
+index 789abcd..ef012345 100644
+--- a/third_party/blink/renderer/core/display/screen.cc
++++ b/third_party/blink/renderer/core/display/screen.cc
+@@ Screen::width()
+ {
+-  return screen_->width();
++  return 1920;
+ }
+@@ Screen::height()
+ {
+-  return screen_->height();
++  return 1080;
+ }
+@@ Screen::colorDepth()
+ {
+-  return screen_->color_depth();
++  return 24;
+ }
