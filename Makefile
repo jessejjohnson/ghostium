@@ -1,10 +1,10 @@
 # Makefile for Custom Chromium Build
 
 # Directory paths
-MOUNT_DIR = /mnt/chromium
-CHROMIUM_DIR = $(MOUNT_DIR)/chromium/src
-DEPOT_TOOLS_DIR = $(MOUNT_DIR)/depot_tools
-PATCHES_DIR = $(CURDIR)/patches
+GHOSTIUM_DIR = $(HOME)/ghostium
+CHROMIUM_DIR = $(HOME)/chromium/src
+DEPOT_TOOLS_DIR = $(HOME)/depot_tools
+PATCHES_DIR = $(GHOSTIUM_DIR)/patches
 
 # Default target
 .PHONY: all
@@ -25,7 +25,7 @@ bootstrap:
 	source ~/.bashrc
 	@echo "=== Fetching Chromium Source ==="
 	mkdir -p $(CHROMIUM_DIR)/..
-	cd $(CHROMIUM_DIR)/.. && fetch --nohooks chromium
+	cd $(CHROMIUM_DIR)/.. && fetch --nohooks --no-history chromium
 	cd $(CHROMIUM_DIR) && gclient sync
 
 # Apply all patches
