@@ -1,0 +1,53 @@
+is_debug=false
+is_official_build=true
+is_component_build=false
+symbol_level=0
+strip_debug_info=true
+
+target_os="linux"
+target_cpu="x64"
+
+# Keep Chrome branding
+is_chrome_branded=true
+chrome_branding="Chrome"
+
+# Headless, but retain full browser stack
+is_headless=false        # FALSE to match "real" Chrome behavior
+enable_headless=true     # Enables headless mode runtime support
+
+# Retain fingerprintable APIs (do NOT disable)
+enable_webgl=true
+enable_gpu=true
+disable_3d_apis=false
+enable_mojo_media=true
+use_alsa=true
+use_pulseaudio=true
+enable_webrtc=true
+enable_plugins=true
+enable_pdf=true
+enable_extensions=true
+enable_printing=true
+enable_basic_printing=true
+
+# Disable unnecessary UI features (safe removals)
+use_aura=false
+use_gtk=false
+use_x11=false
+use_ozone=false
+enable_remoting=false
+enable_cast=false
+use_cups=false
+
+# Safe optimizations
+v8_enable_i18n_support=false
+v8_enable_disassembler=false
+v8_enable_gdbjit=false
+v8_enable_verify_heap=false
+blink_symbol_level=0
+remove_webcore_debug_symbols=true
+
+# Use fast allocator
+use_allocator="tcmalloc"
+
+# Prevent sandbox issues in containers (optional)
+use_linux_sandbox=false

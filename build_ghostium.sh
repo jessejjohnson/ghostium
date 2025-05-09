@@ -260,6 +260,12 @@ main() {
   
   log "Build process completed successfully!"
   log "Ghostium build is available at: $BUILD_DIR/ghostium_$(date '+%Y%m%d').tar.gz"
+
+  # Print system information
+  log "System information:"
+  log "CPU: $(grep 'model name' /proc/cpuinfo | head -1 | cut -d ':' -f2 | xargs)"
+  log "Memory: $(free -h | grep 'Mem:' | awk '{print $2}')"
+  log "Disk space: $(df -h / | awk 'NR==2 {print $4}') available"
   
   return 0
 }
