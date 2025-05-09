@@ -76,8 +76,6 @@ fetch_chromium() {
   fi
   
   cd "$SRC_DIR"
-  git checkout -f main
-  git pull
   
   # Find the tag for the requested Chrome version
   VERSION_TAG=$(git tag | grep "$CHROME_VERSION" | head -1)
@@ -95,6 +93,14 @@ fetch_chromium() {
   gclient runhooks
   
   log "Chromium source fetch complete"
+}
+
+install_dependencies() {
+  log "=== Installing Dependencies ==="
+  
+  "$SRC_DIR/build/install-build-deps.sh"
+
+  log "Dependencies installed"
 }
 
 copy_build_config() {
@@ -252,6 +258,7 @@ main() {
   time setup_environment
   time install_depot_tools
   time fetch_chromium
+  time install_dependencies
   time copy_build_config
   time apply_patches
   time build_chromium
