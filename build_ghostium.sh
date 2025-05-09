@@ -19,7 +19,7 @@ handle_error() {
 trap 'handle_error $LINENO' ERR
 
 # Configuration
-CHROME_VERSION="135.0.7049.84"  # Update to latest stable version
+CHROME_VERSION="135.0.7049.84"
 REPO_DIR="$HOME/ghostium"
 PATCH_DIR="$REPO_DIR/patches"
 BUILD_DIR="$HOME/ghostium-build"
@@ -27,7 +27,7 @@ SRC_DIR="$BUILD_DIR/chromium/src"
 
 # Step 1: Install dependencies
 setup_environment() {
-  log "Setting up build environment"
+  log "=== Setting up build environment ==="
   
   sudo apt-get update
   sudo apt-get install -y git python3 python3-pip lsb-release sudo \
@@ -40,7 +40,6 @@ setup_environment() {
 
   # Create directories
   mkdir -p "$BUILD_DIR"
-  mkdir -p "$PATCH_DIR"
   
   # Configure git
   git config --global user.name "Jesse Johnson"
@@ -51,7 +50,7 @@ setup_environment() {
 
 # Step 2: Install depot_tools
 install_depot_tools() {
-  log "Installing depot_tools"
+  log "=== Installing depot_tools ==="
   
   if [ ! -d "$BUILD_DIR/depot_tools" ]; then
     cd "$BUILD_DIR"
@@ -60,19 +59,20 @@ install_depot_tools() {
   
   export PATH="$PATH:$BUILD_DIR/depot_tools"
   echo 'export PATH="$PATH:$BUILD_DIR/depot_tools"' >> ~/.bashrc
+  source ~/.bashrc
   
   log "depot_tools installation complete"
 }
 
 # Step 3: Fetch Chromium source
 fetch_chromium() {
-  log "Fetching Chromium source code"
+  log "=== Fetching Chromium source code ==="
   
   mkdir -p "$BUILD_DIR/chromium"
   cd "$BUILD_DIR/chromium"
   
   if [ ! -d "$SRC_DIR" ]; then
-    fetch --nohooks chromium
+    fetch --nohooks --no-history chromium
   fi
   
   cd "$SRC_DIR"
@@ -98,18 +98,18 @@ fetch_chromium() {
 }
 
 copy_build_config() {
-  log "Copying build configuration"
+  log "=== Copying build configuration ==="
   
-  mkdir -p "$SRC_DIR/out/Release"
+  mkdir -p "$SRC_DIR/out/Default"
   
-  cp "$REPO_DIR/args.gn" "$SRC_DIR/out/Release/args.gn"
+  cp "$REPO_DIR/args.gn" "$SRC_DIR/out/Default/args.gn"
 
   log "Build configuration copied"
 }
 
 # Step 6: Apply patches
 apply_patches() {
-  log "Applying fingerprinting protection patches"
+  log "=== Applying fingerprinting protection patches ==="
   
   cd "$SRC_DIR"
   
@@ -130,25 +130,25 @@ apply_patches() {
 
 # Step 7: Build Chromium
 build_chromium() {
-  log "Building custom Chromium"
+  log "=== Building custom Chromium ==="
   
   cd "$SRC_DIR"
   
   # Generate build files
-  gn gen out/Release
+  gn gen out/Default
   
   # Get the number of CPU cores for parallel build
   NUM_CORES=$(nproc)
   
   # Build Chrome with ninja
-  autoninja -C out/Release chrome chrome_sandbox headless_shell -j$NUM_CORES
+  ninja -C out/Default chrome chrome_sandbox headless_shell -j$NUM_CORES
   
   log "Chromium build completed"
 }
 
 # Step 8: Package the build
 package_build() {
-  log "Packaging the build"
+  log "=== Packaging the build ==="
   
   BUILD_OUTPUT="$BUILD_DIR/ghostium"
   mkdir -p "$BUILD_OUTPUT"
@@ -157,13 +157,13 @@ package_build() {
   mkdir -p "$BUILD_OUTPUT/resources"
   
   # Copy required files
-  cp -a "$SRC_DIR/out/Release/chrome" "$BUILD_OUTPUT/"
-  cp -a "$SRC_DIR/out/Release/chrome_sandbox" "$BUILD_OUTPUT/"
-  cp -a "$SRC_DIR/out/Release/headless_shell" "$BUILD_OUTPUT/"
-  cp -a "$SRC_DIR/out/Release/"*.so "$BUILD_OUTPUT/" 2>/dev/null || true
-  cp -a "$SRC_DIR/out/Release/"*.pak "$BUILD_OUTPUT/"
-  cp -a "$SRC_DIR/out/Release/icudtl.dat" "$BUILD_OUTPUT/"
-  cp -a "$SRC_DIR/out/Release/v8_context_snapshot.bin" "$BUILD_OUTPUT/" 2>/dev/null || true
+  cp -a "$SRC_DIR/out/Default/chrome" "$BUILD_OUTPUT/"
+  cp -a "$SRC_DIR/out/Default/chrome_sandbox" "$BUILD_OUTPUT/"
+  cp -a "$SRC_DIR/out/Default/headless_shell" "$BUILD_OUTPUT/"
+  cp -a "$SRC_DIR/out/Default/"*.so "$BUILD_OUTPUT/" 2>/dev/null || true
+  cp -a "$SRC_DIR/out/Default/"*.pak "$BUILD_OUTPUT/"
+  cp -a "$SRC_DIR/out/Default/icudtl.dat" "$BUILD_OUTPUT/"
+  cp -a "$SRC_DIR/out/Default/v8_context_snapshot.bin" "$BUILD_OUTPUT/" 2>/dev/null || true
   
   # Create launcher script
   cat > "$BUILD_OUTPUT/launch_chrome.sh" << 'EOL'
@@ -192,7 +192,7 @@ EOL
 
 # Step 9: Run basic tests
 run_tests() {
-  log "Running basic tests"
+  log "=== Running basic tests ==="
   
   TEST_OUTPUT="$BUILD_DIR/test_results"
   mkdir -p "$TEST_OUTPUT"
@@ -233,7 +233,7 @@ EOL
 
 # Step 10: Main function
 main() {
-  log "Starting Ghostium build process"
+  log "=== Starting Ghostium build process ==="
   
   # Check for AWS EC2 environment
   if [ -f /sys/hypervisor/uuid ] && grep -q "ec2" /sys/hypervisor/uuid; then
