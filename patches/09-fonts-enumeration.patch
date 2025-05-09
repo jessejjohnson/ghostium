@@ -4,12 +4,10 @@
                                  const FontQueryOptions* options) {
    auto* resolver = MakeGarbageCollected<ScriptPromiseResolver>(script_state);
    ScriptPromise promise = resolver->Promise();
-+  
 +  // Return empty array to prevent font fingerprinting
 +  HeapVector<Member<FontMetadata>> empty_fonts;
 +  resolver->Resolve(empty_fonts);
 +  return promise;
-+  
    auto query_options = QueryOptions::Create(options);
 
    auto callback = WTF::Bind(&FontManager::DidQueryFonts,
