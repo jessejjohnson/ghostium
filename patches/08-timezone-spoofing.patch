@@ -1,0 +1,9 @@
+--- a/third_party/blink/renderer/core/timing/performance.cc
++++ b/third_party/blink/renderer/core/timing/performance.cc
+@@ -121,7 +121,7 @@ DOMHighResTimeStamp Performance::now() const {
+ 
+ DOMTimeZoneInfo Performance::timeZone() const {
+   DOMTimeZoneInfo result;
+-  result.id = WTF::TimeZone::DefaultTimeZone().GetTimeZoneID();
++  result.id = "UTC";  // Always return UTC to prevent timezone fingerprinting
+   return result;

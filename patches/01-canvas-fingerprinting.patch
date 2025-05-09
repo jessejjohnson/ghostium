@@ -1,0 +1,16 @@
+--- a/third_party/blink/renderer/modules/canvas/canvas_rendering_context.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas_rendering_context.cc
+@@ -155,6 +155,14 @@ bool CanvasRenderingContext::PaintRenderingResultsToDataOrImage(
+   }
++  
++  // Add minor noise to prevent fingerprinting
++  if (result && format == kDataURLExportFormat) {
++    uint8_t* data = result->data();
++    for (unsigned i = 0; i < result->DataLength(); i += 97) {
++      if (i < result->DataLength())
++        data[i] = (data[i] + 1) % 256;
++    }
++  }
+ 
+   return !!result;
+ }

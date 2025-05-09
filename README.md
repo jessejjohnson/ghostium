@@ -4,11 +4,7 @@ This repository builds a **custom Chrome binary** with **fingerprinting removed*
 
 ## Setup & Build Instructions
 
-1. Launch a `c5.4xlarge` Ubuntu 22.04 EC2 instance with:
-   - 150 GB root disk
-   - 500 GB additional EBS volume mounted at `~/mnt/chromium`
-   
-1. Clone this repo:
+1. Clone this repo
 
     ```bash
     cd ~
@@ -16,15 +12,15 @@ This repository builds a **custom Chrome binary** with **fingerprinting removed*
     cd ghostium
     ```
 
-1. Run `deploy.sh`
+1. Run build script
 
     ```bash
-    bash deploy.sh
+    bash build_ghostium.sh
     ```
 
 1. Rertrieve compiled binary
 
     ```
-    ~/chromium/src/out/Default/chrome
+    ~/ghostium-build/ghostium/ghostium_{date}.tar.gz
     ```
     
