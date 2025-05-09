@@ -15,7 +15,8 @@ This repository builds a **custom Chrome binary** with **fingerprinting removed*
 1. Run build script
 
     ```bash
-    bash build_ghostium.sh
+    chrmod +x build_ghostium.sh
+    build_ghostium.sh
     ```
 
 1. Rertrieve compiled binary

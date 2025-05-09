@@ -27,7 +27,7 @@ SRC_DIR="$BUILD_DIR/chromium/src"
 
 # Step 1: Install dependencies
 setup_environment() {
-  log "=== Setting up build environment ==="
+  log "Setting up build environment"
   
   sudo apt-get update
   sudo apt-get install -y git python3 python3-pip lsb-release sudo \
@@ -50,7 +50,7 @@ setup_environment() {
 
 # Step 2: Install depot_tools
 install_depot_tools() {
-  log "=== Installing depot_tools ==="
+  log "Installing depot_tools"
   
   if [ ! -d "$BUILD_DIR/depot_tools" ]; then
     cd "$BUILD_DIR"
@@ -66,7 +66,7 @@ install_depot_tools() {
 
 # Step 3: Fetch Chromium source
 fetch_chromium() {
-  log "=== Fetching Chromium source code ==="
+  log "Fetching Chromium source code"
   
   mkdir -p "$BUILD_DIR/chromium"
   cd "$BUILD_DIR/chromium"
@@ -96,7 +96,7 @@ fetch_chromium() {
 }
 
 install_dependencies() {
-  log "=== Installing Dependencies ==="
+  log "Installing Dependencies"
   
   "$SRC_DIR/build/install-build-deps.sh"
 
@@ -104,7 +104,7 @@ install_dependencies() {
 }
 
 copy_build_config() {
-  log "=== Copying build configuration ==="
+  log "Copying build configuration"
   
   mkdir -p "$SRC_DIR/out/Default"
   
@@ -115,7 +115,7 @@ copy_build_config() {
 
 # Step 6: Apply patches
 apply_patches() {
-  log "=== Applying fingerprinting protection patches ==="
+  log "Applying fingerprinting protection patches"
   
   cd "$SRC_DIR"
   
@@ -136,7 +136,7 @@ apply_patches() {
 
 # Step 7: Build Chromium
 build_chromium() {
-  log "=== Building custom Chromium ==="
+  log "Building custom Chromium"
   
   cd "$SRC_DIR"
   
@@ -154,7 +154,7 @@ build_chromium() {
 
 # Step 8: Package the build
 package_build() {
-  log "=== Packaging the build ==="
+  log "Packaging the build"
   
   BUILD_OUTPUT="$BUILD_DIR/ghostium"
   mkdir -p "$BUILD_OUTPUT"
@@ -198,7 +198,7 @@ EOL
 
 # Step 9: Run basic tests
 run_tests() {
-  log "=== Running basic tests ==="
+  log "Running basic tests"
   
   TEST_OUTPUT="$BUILD_DIR/test_results"
   mkdir -p "$TEST_OUTPUT"
@@ -239,7 +239,7 @@ EOL
 
 # Step 10: Main function
 main() {
-  log "=== Starting Ghostium build process ==="
+  log "Starting Ghostium build process"
   
   # Check for AWS EC2 environment
   if [ -f /sys/hypervisor/uuid ] && grep -q "ec2" /sys/hypervisor/uuid; then
