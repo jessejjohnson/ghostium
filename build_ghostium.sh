@@ -19,7 +19,7 @@ handle_error() {
 trap 'handle_error $LINENO' ERR
 
 # Configuration
-CHROME_VERSION="123.0.6312.58"  # Update to latest stable version
+CHROME_VERSION="135.0.7049.84"  # Update to latest stable version
 REPO_DIR="$HOME/ghostium"
 PATCH_DIR="$REPO_DIR/patches"
 BUILD_DIR="$HOME/ghostium-build"
@@ -44,7 +44,7 @@ setup_environment() {
   
   # Configure git
   git config --global user.name "Jesse Johnson"
-  git config --global user.email "johnson.jesse@live.com"
+  git config --global user.email "jesse.johnson@pricespider.com"
   
   log "Environment setup complete"
 }
