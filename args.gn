@@ -1,53 +1,43 @@
+blink_symbol_level=0
+chrome_pgo_phase=0
+clang_use_chrome_plugins=true
+disable_fieldtrial_testing_config=false
+enable_hangout_services_extension=true
+enable_iterator_debugging=true
+enable_lens_desktop=true
+enable_linux_installer=true
+enable_mdns=false
+enable_mse_mpeg2ts_stream_parser=true
+enable_nacl=false
+enable_reading_list=false
+enable_remoting=false
+enable_rust=true
+enable_service_discovery=true
+enable_swiftshader=true
+enable_updater=false
+enable_vr=false
+enable_widevine=true
+exclude_unwind_tables=true
+fatal_linker_warnings=false
+ffmpeg_branding="Chrome"
+google_api_key=""
+google_default_client_id=""
+google_default_client_secret=""
+is_clang=true
+is_component_build=false
 is_debug=false
 is_official_build=true
-is_component_build=false
+link_pulseaudio=false
+proprietary_codecs=true
 symbol_level=0
-strip_debug_info=true
-
-target_os="linux"
-target_cpu="x64"
-
-# Keep Chrome branding
-is_chrome_branded=true
-chrome_branding="Chrome"
-
-# Headless, but retain full browser stack
-is_headless=false        # FALSE to match "real" Chrome behavior
-enable_headless=true     # Enables headless mode runtime support
-
-# Retain fingerprintable APIs (do NOT disable)
-enable_webgl=true
-enable_gpu=true
-disable_3d_apis=false
-enable_mojo_media=true
-use_alsa=true
-use_pulseaudio=true
-enable_webrtc=true
-enable_plugins=true
-enable_pdf=true
-enable_extensions=true
-enable_printing=true
-enable_basic_printing=true
-
-# Disable unnecessary UI features (safe removals)
-use_aura=false
-use_gtk=false
-use_x11=false
-use_ozone=false
-enable_remoting=false
-enable_cast=false
-use_cups=false
-
-# Safe optimizations
-v8_enable_i18n_support=false
-v8_enable_disassembler=false
-v8_enable_gdbjit=false
-v8_enable_verify_heap=false
-blink_symbol_level=0
-remove_webcore_debug_symbols=true
-
-# Use fast allocator
-use_allocator="tcmalloc"
-
-# Prevent sandbox issues in containers (optional)
-use_linux_sandbox=false
+treat_warnings_as_errors=false
+use_ccache = true
+use_custom_libcxx=true
+use_libcxx=true
+use_official_google_api_keys=false
+use_pulseaudio=false
+use_sysroot=true
+use_thin_lto=true
+use_unofficial_version_number=false
+use_vaapi=false
+v8_symbol_level=0
