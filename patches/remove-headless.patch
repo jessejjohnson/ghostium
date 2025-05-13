@@ -1,0 +1,27 @@
+diff --git a/components/embedder_support/user_agent_utils.cc b/components/embedder_support/user_agent_utils.cc
+index 47abbd2835..6e190ecfc9 100644
+--- a/components/embedder_support/user_agent_utils.cc
++++ b/components/embedder_support/user_agent_utils.cc
+@@ -246,9 +246,6 @@ const blink::UserAgentBrandList GetUserAgentBrandFullVersionListInternal(
+ std::string GetUserAgentInternal(
+     UserAgentReductionEnterprisePolicyState user_agent_reduction) {
+   std::string product = GetProductAndVersion(user_agent_reduction);
+-  if (base::CommandLine::ForCurrentProcess()->HasSwitch(kHeadless)) {
+-    product.insert(0, "Headless");
+-  }
+ 
+ #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
+   if (base::CommandLine::ForCurrentProcess()->HasSwitch(kUseMobileUserAgent)) {
+diff --git a/headless/lib/browser/headless_browser_impl.cc b/headless/lib/browser/headless_browser_impl.cc
+index 5ef3b847dc..379b9a298f 100644
+--- a/headless/lib/browser/headless_browser_impl.cc
++++ b/headless/lib/browser/headless_browser_impl.cc
+@@ -59,7 +59,7 @@ namespace headless {
+ namespace {
+ 
+ // Product name for building the default user agent string.
+-const char kHeadlessProductName[] = "HeadlessChrome";
++const char kHeadlessProductName[] = "Chrome";
+ 
+ #if defined(HEADLESS_USE_PREFS)
+ const base::FilePath::CharType kLocalStateFilename[] =

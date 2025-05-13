@@ -1,0 +1,14 @@
+diff --git a/content/browser/client_hints/client_hints.cc b/content/browser/client_hints/client_hints.cc
+index d40ff68f9e..439350b32c 100644
+--- a/content/browser/client_hints/client_hints.cc
++++ b/content/browser/client_hints/client_hints.cc
+@@ -612,7 +612,8 @@ bool IsClientHintAllowed(const ClientHintsExtendedData& data,
+ 
+ bool ShouldAddClientHint(const ClientHintsExtendedData& data,
+                          WebClientHintsType type) {
+-  return IsClientHintEnabled(data, type) && IsClientHintAllowed(data, type);
++  return false;
++  // return IsClientHintEnabled(data, type) && IsClientHintAllowed(data, type);
+ }
+ 
+ bool IsJavascriptEnabled(FrameTreeNode* frame_tree_node) {

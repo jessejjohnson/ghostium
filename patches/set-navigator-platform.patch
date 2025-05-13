@@ -1,0 +1,55 @@
+diff --git a/third_party/blink/renderer/core/frame/navigator_id.cc b/third_party/blink/renderer/core/frame/navigator_id.cc
+index 50a1727f8d..f26d5cb749 100644
+--- a/third_party/blink/renderer/core/frame/navigator_id.cc
++++ b/third_party/blink/renderer/core/frame/navigator_id.cc
+@@ -59,28 +59,29 @@ String NavigatorID::appVersion() {
+ }
+ 
+ String NavigatorID::platform() const {
+-#if BUILDFLAG(IS_MAC)
+-  // Match Safari and Mozilla on Mac x86.
+   return "MacIntel";
+-#elif BUILDFLAG(IS_WIN)
+-  // Match Safari and Mozilla on Windows.
+-  return "Win32";
+-#else  // Unix-like systems
+-  struct utsname osname;
+-  DEFINE_THREAD_SAFE_STATIC_LOCAL(ThreadSpecific<String>, platform_name, ());
+-  if (platform_name->IsNull()) {
+-    StringBuilder result;
+-    if (uname(&osname) >= 0) {
+-      result.Append(osname.sysname);
+-      if (strlen(osname.machine) != 0) {
+-        result.Append(" ");
+-        result.Append(osname.machine);
+-      }
+-    }
+-    *platform_name = result.ToString();
+-  }
+-  return *platform_name;
+-#endif
++// #if BUILDFLAG(IS_MAC)
++//   // Match Safari and Mozilla on Mac x86.
++//   return "MacIntel";
++// #elif BUILDFLAG(IS_WIN)
++//   // Match Safari and Mozilla on Windows.
++//   return "Win32";
++// #else  // Unix-like systems
++//   struct utsname osname;
++//   DEFINE_THREAD_SAFE_STATIC_LOCAL(ThreadSpecific<String>, platform_name, ());
++//   if (platform_name->IsNull()) {
++//     StringBuilder result;
++//     if (uname(&osname) >= 0) {
++//       result.Append(osname.sysname);
++//       if (strlen(osname.machine) != 0) {
++//         result.Append(" ");
++//         result.Append(osname.machine);
++//       }
++//     }
++//     *platform_name = result.ToString();
++//   }
++//   return *platform_name;
++// #endif
+ }
+ 
+ String NavigatorID::product() {
