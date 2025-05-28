@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-CHROMIUM_VERSION="137.0.7151.56"
+CHROMIUM_VERSION="137.0.7060.0"
 ATTACHED_EFS_DIR="~/chromium-build"
 PATCH_DIR="${PWD}/patches"
 OUT_DIR="${PWD}/out"
