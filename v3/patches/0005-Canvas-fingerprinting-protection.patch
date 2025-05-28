@@ -1,0 +1,40 @@
+diff --git a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
+index ghi789..jkl012 100644
+--- a/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
++++ b/third_party/blink/renderer/modules/canvas/canvas2d/canvas_rendering_context_2d.cc
+@@ -6,6 +6,7 @@
+ 
+ #include <algorithm>
+ 
++#include "chrome/browser/fingerprinting/override_manager.h"
+ #include "third_party/blink/renderer/core/html/canvas/canvas_font_cache.h"
+ #include "third_party/blink/renderer/modules/canvas/canvas2d/canvas_style.h"
+ #include "third_party/blink/renderer/platform/graphics/skia/skia_utils.h"
+@@ -1234,6 +1235,14 @@ String CanvasRenderingContext2D::font() const {
+ 
+ void CanvasRenderingContext2D::setFont(const String& new_font) {
+   if (new_font == GetState().UnparsedFont() && !FontDirtyForMeasurement()) {
++    // Apply font fingerprint spoofing
++    if (auto* override_manager = FingerprintOverrideManager::GetInstance();
++        override_manager->IsSpoofingEnabled()) {
++      const auto& fonts = override_manager->GetFontList();
++      if (!fonts.empty()) {
++        GetState().SetFont(FontDescription(), fonts[0]);
++      }
++    }
+     return;
+   }
+ 
+@@ -2345,6 +2354,13 @@ ImageData* CanvasRenderingContext2D::getImageData(
+ }
+ 
+ String CanvasRenderingContext2D::getCanvasFingerprint() {
++  if (auto* override_manager = FingerprintOverrideManager::GetInstance();
++      override_manager->IsSpoofingEnabled()) {
++    String noise_hash = override_manager->GetCanvasNoiseHash();
++    if (!noise_hash.IsEmpty()) {
++      return noise_hash;
++    }
++  }
+   return GenerateCanvasFingerprint();
+ }

@@ -1,0 +1,11 @@
+diff --git a/chrome/app/theme/chromium/BRANDING b/chrome/app/theme/chromium/BRANDING
+index 111111..222222 100644
+--- a/chrome/app/theme/chromium/BRANDING
++++ b/chrome/app/theme/chromium/BRANDING
+@@ -1,6 +1,6 @@
+-NAME=Chromium
+-SHORTNAME=Chromium
+-OFFICIAL_BUILD=0
++NAME=Ghostium
++SHORTNAME=Ghostium
++OFFICIAL_BUILD=1

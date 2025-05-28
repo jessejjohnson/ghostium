@@ -1,0 +1,16 @@
+--- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
++++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
+@@ -1736,7 +1736,14 @@ WebGLExtension* WebGLRenderingContextBase::GetExtension(const String& name) {
+ String WebGLRenderingContextBase::GetParameter(GLenum pname) {
+   if (pname == GL_RENDERER || pname == GL_VENDOR) {
+-    return String(reinterpret_cast<const char*>(glGetString(pname)));
++    // Standardize renderer and vendor strings to prevent fingerprinting
++    if (pname == GL_RENDERER)
++      return String("WebKit WebGL");
++    else if (pname == GL_VENDOR)
++      return String("WebKit");
++    else
++      return String(reinterpret_cast<const char*>(glGetString(pname)));
+   }
+   return String();
+ }

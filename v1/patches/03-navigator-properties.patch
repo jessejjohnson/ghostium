@@ -1,0 +1,28 @@
+--- a/third_party/blink/renderer/core/frame/navigator.cc
++++ b/third_party/blink/renderer/core/frame/navigator.cc
+@@ -92,7 +92,7 @@ String Navigator::userAgent() const {
+ 
+ uint8_t Navigator::deviceMemory() const {
+   if (RuntimeEnabledFeatures::DeviceMemoryEnabled())
+-    return device_memory_->deviceMemory();
++    return 8;  // Standardize to 8GB
+   return 0;
+ }
+ 
+@@ -105,7 +105,7 @@ NavigatorUA& Navigator::userAgentData() const {
+ 
+ unsigned Navigator::hardwareConcurrency() const {
+   if (RuntimeEnabledFeatures::HardwareConcurrencyEnabled())
+-    return hardware_concurrency_->hardwareConcurrency();
++    return 4;  // Standardize to 4 cores
+   return 0;
+ }
+ 
+@@ -118,7 +118,7 @@ String Navigator::language() const {
+ 
+ String Navigator::platform() const {
+   if (RuntimeEnabledFeatures::NavigatorPlatformEnabled())
+-    return platform_->platform();
++    return "Win32";  // Standardize platform
+   return String();
+ }

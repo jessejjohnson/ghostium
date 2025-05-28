@@ -1,0 +1,13 @@
+diff --git a/content/renderer/render_frame_impl.cc b/content/renderer/render_frame_impl.cc
+index abc123..def456 100644
+--- a/content/renderer/render_frame_impl.cc
++++ b/content/renderer/render_frame_impl.cc
+@@ -1234,7 +1234,7 @@ void RenderFrameImpl::SetWebDriverValue(
+     const absl::optional<std::string>& value) {
+   if (!value.has_value()) {
+     web_driver_value_.reset();
+-  } else {
++  } else if (!FingerprintOverrideManager::GetInstance()->IsSpoofingEnabled()) {
+     web_driver_value_ = *value;
+   }
+ }

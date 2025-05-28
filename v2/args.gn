@@ -17,6 +17,34 @@ enable_swiftshader=true
 enable_updater=false
 enable_vr=false
 enable_widevine=true
+
+# Exploring
+enable_android_native_printing = false
+enable_background_mode = false
+enable_basic_printing = false
+enable_bookmarks = false
+# enable_extensions = false
+enable_google_now = false
+enable_hangout_services_extension = false
+enable_hevc_parser_and_hw_decoder = false
+enable_hidpi = false
+enable_hotwording = false
+enable_mdns = false
+enable_media_remoting = false
+enable_nacl_nonsfi = false
+enable_one_click_signin = false
+enable_print_preview = false
+enable_reading_list = false
+enable_remoting = false
+enable_service_discovery = false
+enable_spellcheck = false
+enable_sync = false
+enable_updater = false
+enable_widevine = false
+enable_wifi_bootstrapping = false
+enable_wifi_credential_api = false
+# END Exploring
+
 exclude_unwind_tables=true
 fatal_linker_warnings=false
 ffmpeg_branding="Chrome"

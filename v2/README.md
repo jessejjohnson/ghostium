@@ -12,6 +12,10 @@ The following steps will guide you through the setup and build process.
 
 [TODO] Add EC2 information
 
+```bash
+sudo mount /dev/nvme1n1 ~/chromium-build
+```
+
 
 ```bash
 sudo fallocate -l 16G /swapfile

@@ -1,0 +1,25 @@
+diff --git a/services/network/public/cpp/client_hints.cc b/services/network/public/cpp/client_hints.cc
+index def456..ghi789 100644
+--- a/services/network/public/cpp/client_hints.cc
++++ b/services/network/public/cpp/client_hints.cc
+@@ -5,6 +5,7 @@
+ #include "services/network/public/cpp/client_hints.h"
+ 
+ #include "base/containers/fixed_flat_map.h"
++#include "chrome/browser/fingerprinting/override_manager.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/mojom/web_client_hints_types.mojom-shared.h"
+ 
+@@ -123,6 +124,12 @@ std::string GetHeaderValue(mojom::WebClientHintsType type,
+                           const blink::EnabledClientHints& enabled_hints,
+                           const url::Origin& origin,
+                           const absl::optional<GURL>& third_party_url) {
++  auto* override_manager = FingerprintOverrideManager::GetInstance();
++  if (override_manager->IsSpoofingEnabled()) {
++    if (auto* hints = override_manager->GetClientHints())
++      return hints->GetHeaderValue(type);
++  }
++
+   switch (type) {
+     case mojom::WebClientHintsType::kUA:
+     case mojom::WebClientHintsType::kUAArch:
