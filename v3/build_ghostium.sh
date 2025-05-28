@@ -2,11 +2,12 @@
 
 # Configuration
 CHROMIUM_VERSION="137.0.7151.56"
-PATCH_DIR="~/chromium-build/patches"
-OUT_DIR="~/chromium-build/out"
+ATTACHED_EFS_DIR="~/chromium-build"
+PATCH_DIR="${PWD}/patches"
+OUT_DIR="${PWD}/out"
 
 # Fetch Chromium source
-mkdir ~/chromium && cd ~/chromium
+mkdir -p "${ATTACHED_EFS_DIR}/chromium" && cd "${ATTACHED_EFS_DIR}/chromium"
 fetch --nohooks --no-history chromium
 cd src
 git checkout tags/$CHROMIUM_VERSION
