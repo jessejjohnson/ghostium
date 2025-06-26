@@ -1,0 +1,30 @@
+# Chromium source and build artifacts
+src/
+depot_tools/
+out/
+.cipd/
+
+# Build outputs
+*.ninja
+*.ninja_deps
+*.ninja_log
+.gclient_entries
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+*.temp
