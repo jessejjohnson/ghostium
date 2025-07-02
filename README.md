@@ -35,16 +35,23 @@ chmod +x step1-create-aws-resources.sh
 ```
 
 This creates:
-- Single c5.4xlarge Ubuntu 22.04 LTS EC2 instance (16 vCPU, 32GB RAM)
+- **Unique Build ID**: Generates a unique identifier for this build session (e.g., `ghostium-20240326-143052-a1b2c3d4`)
+- **Build Folder**: Creates a local folder named `build-<BUILD_ID>` containing all artifacts
+- **Custom EBS-backed AMI**: Creates a custom Ubuntu 22.04 LTS AMI with 200GB gp3 root volume
+- Single c5.4xlarge EC2 instance (16 vCPU, 32GB RAM) launched from custom AMI
 - Separate 500GB EBS volume for Chromium build storage
 - S3 bucket for build artifacts
 - IAM roles and security groups
 
+All AWS resources are tagged with the Build ID for easy identification and cleanup.
+
+**Note**: AMI creation adds ~5-10 minutes to the initial setup time but provides a standardized base image with optimal storage configuration.
+
 ### Step 2: Prepare Build Environment
 
-SSH into your build instance:
+SSH into your build instance (use the exact command provided by step1):
 ```bash
-ssh -i ghostium-build-key.pem ubuntu@<instance-ip>
+ssh -i build-<BUILD_ID>/<BUILD_ID>-key.pem ubuntu@<instance-ip>
 ./step2-prepare-environment.sh
 ```
 
@@ -70,15 +77,38 @@ This performs:
 
 ### Step 4: Cleanup Resources
 
+#### Option A: Clean Specific Build
+```bash
+./step4-cleanup-aws-resources.sh <BUILD_ID>
+```
+
+**Important**: Use the Build ID from step 1 output. Example:
+```bash
+./step4-cleanup-aws-resources.sh ghostium-20240326-143052-a1b2c3d4
+```
+
+#### Option B: Clean ALL Ghostium Resources
 ```bash
 ./step4-cleanup-aws-resources.sh
 ```
 
-This performs:
-- Terminates EC2 instances and removes EBS volumes
-- Cleans up security groups and IAM resources
-- Removes SSH keys and optionally S3 artifacts
-- Provides cost control and resource management
+**WARNING**: This removes ALL Ghostium infrastructure from AWS, including all builds!
+
+**Specific Build Cleanup** removes:
+- EC2 instance and EBS volumes for that build
+- Custom AMI and associated snapshots
+- Security group, IAM resources, SSH key pair
+- Build folder and local artifacts
+- S3 bucket and artifacts (optional)
+
+**Complete Infrastructure Cleanup** removes:
+- **ALL** EC2 instances with Project=ghostium-build tag
+- **ALL** custom AMIs and associated snapshots  
+- **ALL** security groups with ghostium in the name
+- **ALL** IAM roles, policies, and instance profiles with ghostium in the name
+- **ALL** SSH key pairs with ghostium in the name
+- **ALL** local build folders
+- S3 bucket and ALL artifacts (optional)
 
 ## Build Outputs
 
@@ -128,9 +158,10 @@ Customize the Linux x64 build by editing the configuration in `step3-build-chrom
 
 Typical AWS costs per build:
 - **c5.4xlarge (Linux x64)**: ~$25-35 for 4-6 hour build
-- **Storage**: ~$10-15 for 500GB EBS volume
+- **Custom AMI creation**: ~$1-2 (temporary t3.micro instance + storage)
+- **Storage**: ~$10-15 for 500GB EBS volume + ~$3-5 for 200GB AMI storage
 - **Data Transfer**: ~$2-5 for artifact uploads
-- **Total estimated cost**: ~$40-55 per build
+- **Total estimated cost**: ~$45-65 per build
 
 ## Security Considerations
 
@@ -141,33 +172,57 @@ Typical AWS costs per build:
 
 ## Resource Management
 
+### Build ID System
+
+Each build execution generates a unique Build ID in the format: `ghostium-YYYYMMDD-HHMMSS-XXXXXXXX`
+
+Example: `ghostium-20240326-143052-a1b2c3d4`
+
+### Build Folder Structure
+
+```
+build-<BUILD_ID>/
+├── build-info.txt          # Build metadata
+├── <BUILD_ID>-key.pem      # SSH private key
+├── instance.txt            # EC2 instance ID
+├── volume.txt              # EBS volume ID
+├── custom-ami.txt          # Custom AMI ID
+├── trust-policy.json       # IAM trust policy
+├── instance-policy.json    # IAM instance policy
+└── user-data.sh           # EC2 user data script
+```
+
 ### Comprehensive Tagging Strategy
 
 All AWS resources are tagged with:
-- **Name**: Descriptive resource name
+- **Name**: Descriptive resource name with Build ID
 - **Project**: ghostium-build
 - **Environment**: build
 - **Platform**: linux-x64
+- **BuildId**: Unique build identifier
 - **CreatedBy**: AWS user who created the resources
 - **CreatedDate**: Creation timestamp
 - **Purpose**: Resource purpose (chromium-build, chromium-build-storage, etc.)
 - **CostCenter**: engineering
 - **AutoShutdown**: true (for automated cleanup)
 
-### Step 4: Resource Cleanup
+### Resource Cleanup
 
-To clean up all AWS resources after build completion:
+#### Specific Build Cleanup
+To clean up resources for a specific build:
+
+```bash
+./step4-cleanup-aws-resources.sh <BUILD_ID>
+```
+
+#### Complete Infrastructure Cleanup  
+To remove ALL Ghostium resources from AWS:
 
 ```bash
 ./step4-cleanup-aws-resources.sh
 ```
 
-This removes:
-- EC2 instances and all attached EBS volumes
-- Security groups
-- IAM roles, policies, and instance profiles
-- SSH key pairs
-- S3 bucket and artifacts (optional)
+**Requires typing "DELETE ALL" to confirm - this action removes everything!**
 
 ## Troubleshooting
 
@@ -186,6 +241,10 @@ This removes:
 - Check security group allows SSH (port 22)
 - Verify instance is in running state
 - Confirm public IP assignment
+
+**"Build folder not found" error in cleanup**
+- Run `./step4-cleanup-aws-resources.sh` (without build ID) to clean ALL resources
+- This works even if specific build folders are missing
 
 ### Getting Help
 

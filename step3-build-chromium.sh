@@ -17,51 +17,14 @@ TARGET_OS="linux"
 
 BUILD_START_TIME=$(date +%s)
 
-echo "Starting Ghostium Chromium build for Linux x64..."
-
-# Function to mount and prepare build volume
-mount_build_volume() {
-    log "Setting up 500GB build volume..."
-    
-    # Check if volume is already mounted
-    if mountpoint -q /mnt/chromium-build; then
-        log "Build volume already mounted at /mnt/chromium-build"
-        return 0
-    fi
-    
-    # Wait for the EBS volume to be available
-    log "Waiting for EBS volume /dev/xvdf to be available..."
-    while [ ! -b /dev/xvdf ]; do
-        sleep 5
-        log "Still waiting for /dev/xvdf..."
-    done
-    
-    # Check if volume has a filesystem
-    if ! sudo file -s /dev/xvdf | grep -q filesystem; then
-        log "Formatting EBS volume with ext4 filesystem..."
-        sudo mkfs.ext4 /dev/xvdf
-    fi
-    
-    # Create mount point
-    sudo mkdir -p /mnt/chromium-build
-    
-    # Mount the volume
-    log "Mounting EBS volume..."
-    sudo mount /dev/xvdf /mnt/chromium-build
-    
-    # Set ownership to build user
-    sudo chown -R ghostium-builder:ghostium-builder /mnt/chromium-build
-    
-    # Update environment variables to use mounted volume
-    export CHROMIUM_DIR="/mnt/chromium-build/chromium"
-    
-    log "Build volume mounted and ready at /mnt/chromium-build"
-}
 
 # Function to log with timestamp
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
+
+log "Starting Ghostium Chromium build for Linux x64..."
+
 
 # Function to sync Chromium source
 sync_chromium_source() {
@@ -128,61 +91,129 @@ configure_build() {
     log "Configuring build..."
     
     cd "$CHROMIUM_DIR/src"
-    
+
+    mkdir -p "$CHROMIUM_DIR/src/$BUILD_DIR"
+
     # Create build arguments for Linux x64
-    cat > "${BUILD_DIR}.args" << EOF
+#     cat > "$CHROMIUM_DIR/src/$BUILD_DIR/args.gn" << EOF
+# # Ghostium build configuration for Linux x64
+# is_debug = false
+# is_official_build = true
+# target_cpu = "x64"
+# target_os = "linux"
+# symbol_level = 1
+
+# # Optimization settings
+# use_thin_lto = true
+# is_cfi = false
+# use_cfi_icall = false
+
+# # Disable unnecessary features for headless automation
+# enable_nacl = false
+# enable_print_preview = false
+# enable_service_discovery = false
+# enable_background_mode = false
+# enable_google_now = false
+# enable_one_click_signin = false
+# enable_settings_app = false
+# enable_supervised_users = false
+# enable_task_manager = false
+# enable_themes = false
+
+# # Essential features for automation
+# enable_webrtc = true
+# enable_extensions = false
+# enable_plugins = false
+
+# # Media codecs
+# proprietary_codecs = false
+# ffmpeg_branding = "Chromium"
+# enable_av1_decoder = true
+# enable_dav1d_decoder = true
+
+# # Linux-specific settings
+# use_sysroot = true
+# use_cups = false
+# use_pulseaudio = false
+# use_alsa = false
+# use_gio = false
+# treat_warnings_as_errors = false
+
+# # Ghostium-specific feature flags
+# # ghostium_fingerprint_management = true
+# # ghostium_headless_optimizations = true
+# # ghostium_container_mode = true
+# EOF
+    cat > "$CHROMIUM_DIR/src/$BUILD_DIR/args.gn" << EOF
 # Ghostium build configuration for Linux x64
-is_debug = false
-is_official_build = true
-target_cpu = "x64"
-target_os = "linux"
-symbol_level = 1
-
-# Optimization settings
-use_thin_lto = true
-is_cfi = false
-use_cfi_icall = false
-
-# Disable unnecessary features for headless automation
-enable_nacl = false
-enable_print_preview = false
-enable_service_discovery = false
+blink_symbol_level=0
+chrome_pgo_phase=0
+clang_use_chrome_plugins=true
+disable_fieldtrial_testing_config=false
+enable_av1_decoder = true
 enable_background_mode = false
-enable_google_now = false
+enable_dav1d_decoder = true
+enable_hangout_services_extension=true
+enable_iterator_debugging=true
+enable_lens_desktop=true
+enable_linux_installer=true
+enable_mdns=false
+enable_mse_mpeg2ts_stream_parser=true
+enable_nacl=false
 enable_one_click_signin = false
+enable_print_preview = false
+enable_reading_list=false
+enable_remoting=false
+enable_rust=true
+enable_service_discovery = false
+enable_service_discovery=true
 enable_settings_app = false
-enable_supervised_users = false
+enable_swiftshader=true
 enable_task_manager = false
 enable_themes = false
-
-# Essential features for automation
+enable_updater=false
+enable_vr=false
 enable_webrtc = true
-enable_extensions = false
-enable_plugins = false
-
-# Media codecs
-proprietary_codecs = false
-ffmpeg_branding = "Chromium"
-enable_av1_decoder = true
-enable_dav1d_decoder = true
-
-# Linux-specific settings
-use_sysroot = true
-use_cups = false
-use_pulseaudio = false
+enable_widevine=true
+exclude_unwind_tables=true
+fatal_linker_warnings=false
+ffmpeg_branding="Chrome"
+google_api_key=""
+google_default_client_id=""
+google_default_client_secret=""
+is_cfi = false
+is_clang=true
+is_component_build=false
+is_debug=false
+is_official_build=true
+link_pulseaudio=false
+proprietary_codecs=true
+symbol_level=0
+target_cpu = "x64"
+target_os = "linux"
+treat_warnings_as_errors=false
 use_alsa = false
-use_gio = false
-treat_warnings_as_errors = false
-
+use_ccache = true
+use_cfi_icall = false
+use_cups = false
+use_custom_libcxx=true
+use_libcxx=true
+use_official_google_api_keys=false
+use_pulseaudio=false
+use_sysroot=true
+use_thin_lto=true
+use_unofficial_version_number=false
+use_vaapi=false
+v8_symbol_level=0
 # Ghostium-specific feature flags
+# ghostium_container_mode = true
 # ghostium_fingerprint_management = true
 # ghostium_headless_optimizations = true
-# ghostium_container_mode = true
 EOF
     
     # Generate build files
     log "Generating build files with gn..."
-    gn gen "$BUILD_DIR" --args="$(cat ${BUILD_DIR}.args | tr '\n' ' ')"
+    gn gen $BUILD_DIR
     
     log "Build configured"
 }
@@ -307,7 +338,7 @@ main() {
     log "Build Directory: $BUILD_DIR"
     
     # Mount and prepare the build volume first
-    mount_build_volume
+    # mount_build_volume
     
     log "Updated Chromium Directory: $CHROMIUM_DIR"
     

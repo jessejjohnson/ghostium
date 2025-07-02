@@ -9,11 +9,17 @@ DEPOT_TOOLS_DIR="/opt/depot_tools"
 CHROMIUM_DIR="/mnt/chromium-build/chromium"
 BUILD_USER="ghostium-builder"
 
-echo "Preparing Ghostium build environment for Linux x64..."
+# Function to log with timestamp
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "Preparing Ghostium build environment for Linux x64..."
+
 
 # Function to install dependencies
 install_dependencies() {
-    echo "Installing Ubuntu dependencies..."
+    log "Installing Ubuntu dependencies..."
     
     # Update system
     sudo apt update -y
@@ -33,7 +39,7 @@ install_dependencies() {
 
 # Function to create build user
 create_build_user() {
-    echo "Creating build user..."
+    log "Creating build user..."
     if ! id "$BUILD_USER" &>/dev/null; then
         sudo useradd -m -s /bin/bash "$BUILD_USER"
         sudo usermod -aG sudo "$BUILD_USER"
@@ -48,7 +54,7 @@ create_build_user() {
 
 # Function to install depot_tools
 install_depot_tools() {
-    echo "Installing depot_tools..."
+    log "Installing depot_tools..."
     
     # Linux installation
     if [ ! -d "$DEPOT_TOOLS_DIR/.git" ]; then
@@ -63,7 +69,7 @@ install_depot_tools() {
 
 # Function to configure git
 configure_git() {
-    echo "Configuring git..."
+    log "Configuring git..."
     
     sudo -u "$BUILD_USER" git config --global user.name "Jesse Johnson"
     sudo -u "$BUILD_USER" git config --global user.email "johnson.jesse@live.com"
@@ -74,7 +80,7 @@ configure_git() {
 
 # Function to download build scripts
 download_build_scripts() {
-    echo "Downloading build scripts..."
+    log "Downloading build scripts..."
     
     sudo -u "$BUILD_USER" aws s3 cp "s3://${PROJECT_NAME}-artifacts/step3-build-chromium.sh" "/home/$BUILD_USER/"
     sudo chmod +x "/home/$BUILD_USER/step3-build-chromium.sh"
@@ -82,7 +88,7 @@ download_build_scripts() {
 
 # Function to prepare chromium workspace (will be done on mounted volume in step3)
 prepare_chromium_workspace() {
-    echo "Chromium workspace will be prepared on mounted volume in step3..."
+    log "Chromium workspace will be prepared on mounted volume in step3..."
     # Note: The .gclient file will be created by step3 on the mounted volume
 }
 
@@ -101,7 +107,7 @@ EOF
 
 # Function to optimize system for building
 optimize_system() {
-    echo "Optimizing system for building..."
+    log "Optimizing system for building..."
     
     # Increase file descriptor limits
     echo "* soft nofile 65536" | sudo tee -a /etc/security/limits.conf
@@ -112,21 +118,60 @@ optimize_system() {
     echo "vm.overcommit_memory=1" | sudo tee -a /etc/sysctl.conf
     sudo sysctl -p
     
-    # Create swap if not exists (for smaller instances)
-    if [ ! -f /swapfile ]; then
-        sudo dd if=/dev/zero of=/swapfile bs=1024 count=8388608  # 8GB swap
+    if ! swapon --show | grep -q "/swapfile"; then
+        log "Setting up swap space..."
+        sudo fallocate -l 16G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=16384
         sudo chmod 600 /swapfile
         sudo mkswap /swapfile
         sudo swapon /swapfile
-        echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+        echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
     fi
+}
+
+# Function to mount and prepare build volume
+mount_build_volume() {
+    log "Setting up 500GB build volume..."
+    
+    # Check if volume is already mounted
+    if mountpoint -q /mnt/chromium-build; then
+        log "Build volume already mounted at /mnt/chromium-build"
+        return 0
+    fi
+    
+    # Wait for the EBS volume to be available
+    log "Waiting for EBS volume /dev/nvme1n1 to be available..."
+    while [ ! -b /dev/nvme1n1 ]; do
+        sleep 5
+        log "Still waiting for /dev/nvme1n1..."
+    done
+    
+    # Check if volume has a filesystem
+    if ! sudo file -s /dev/nvme1n1 | grep -q filesystem; then
+        log "Formatting EBS volume with ext4 filesystem..."
+        sudo mkfs.ext4 /dev/nvme1n1
+    fi
+    
+    # Create mount point
+    sudo mkdir -p /mnt/chromium-build
+    
+    # Mount the volume
+    log "Mounting EBS volume..."
+    sudo mount /dev/nvme1n1 /mnt/chromium-build
+    
+    # Set ownership to build user
+    sudo chown -R $BUILD_USER:$BUILD_USER /mnt/chromium-build
+    
+    # Update environment variables to use mounted volume
+    export CHROMIUM_DIR="/mnt/chromium-build/chromium"
+    
+    log "Build volume mounted and ready at /mnt/chromium-build"
 }
 
 # Main execution
 main() {
-    echo "Starting Ghostium environment preparation..."
-    echo "Platform: Linux x64"
-    echo ""
+    log "Starting Ghostium environment preparation..."
+    log "Platform: Linux x64"
+    log ""
     
     install_dependencies
     create_build_user
@@ -136,28 +181,29 @@ main() {
     prepare_chromium_workspace
     setup_environment
     optimize_system
+    mount_build_volume
     
-    echo ""
-    echo "Environment preparation complete!"
-    echo ""
-    echo "Summary:"
-    echo "==========="
-    echo "Platform: Linux x64"
-    echo "Depot tools: Installed"
-    echo "Build user: $BUILD_USER"
-    echo "Chromium workspace: Will be prepared on mounted volume"
-    echo ""
-    echo "Next Steps:"
-    echo "1. Switch to build user: sudo su - $BUILD_USER"
-    echo "2. Run: ./step3-build-chromium.sh"
-    echo ""
-    echo "Note: The next step (source sync + build) will take 2-4 hours and use ~100GB disk space."
+    log ""
+    log "Environment preparation complete!"
+    log ""
+    log "Summary:"
+    log "==========="
+    log "Platform: Linux x64"
+    log "Depot tools: Installed"
+    log "Build user: $BUILD_USER"
+    log "Chromium workspace: Will be prepared on mounted volume"
+    log ""
+    log "Next Steps:"
+    log "1. Switch to build user: sudo su - $BUILD_USER"
+    log "2. Run: ./step3-build-chromium.sh"
+    log ""
+    log "Note: The next step (source sync + build) will take 2-4 hours and use ~100GB disk space."
 }
 
 # Check if running as root on Linux platforms
 if [[ $EUID -eq 0 ]] && [[ "$1" != "--allow-root" ]]; then
-    echo "This script should not be run as root. Run as ubuntu user instead."
-    echo "If you must run as root, use: $0 --allow-root"
+    log "This script should not be run as root. Run as ubuntu user instead."
+    log "If you must run as root, use: $0 --allow-root"
     exit 1
 fi
 
