@@ -63,9 +63,16 @@ cd "${CHROMIUM_ROOT}"
 
 if [[ ! -d "${SRC_DIR}/.git" ]]; then
   log "Fetching Chromium source. This is the long first-time checkout."
+
+  rm -f "${CHROMIUM_ROOT}/.gclient" "${CHROMIUM_ROOT}/.gclient_entries"
+
   fetch --nohooks --no-history chromium
+
+  log "Replacing fetch-generated .gclient with repo template."
+  cp "${GCLIENT_TEMPLATE}" "${CHROMIUM_ROOT}/.gclient"
 else
-  log "Chromium source already exists. Skipping fetch."
+  log "Chromium source already exists. Ensuring .gclient matches repo template."
+  cp "${GCLIENT_TEMPLATE}" "${CHROMIUM_ROOT}/.gclient"
 fi
 
 if [[ -s "${STABLE_COMMIT_FILE}" ]]; then

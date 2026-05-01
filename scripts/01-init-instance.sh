@@ -116,6 +116,7 @@ mkdir -p \
   "${LOG_ROOT}" \
   "${WORK_MOUNT}/tmp"
 
+chown -R ${BUILD_USER}:${BUILD_USER} "${WORK_MOUNT}"
 chmod 755 "${WORK_MOUNT}"
 chmod 1777 "${WORK_MOUNT}/tmp"
 
