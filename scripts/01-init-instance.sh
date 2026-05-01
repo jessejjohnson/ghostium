@@ -116,13 +116,7 @@ mkdir -p \
   "${LOG_ROOT}" \
   "${WORK_MOUNT}/tmp"
 
-chown -R "${WORK_OWNER}" \
-  "${CHROMIUM_ROOT}" \
-  "${BUILD_ROOT}" \
-  "${DIST_ROOT}" \
-  "${LOG_ROOT}" \
-  "${WORK_MOUNT}/tmp"
-
+chmod 755 "${WORK_MOUNT}"
 chmod 1777 "${WORK_MOUNT}/tmp"
 
 log "Applying sysctl settings."
