@@ -1,33 +1,37 @@
-# Chromium source and build artifacts
+# Secrets
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+# Local state
+.local/
+.cache/
+tmp/
+logs/
+dist/
+artifacts/
+
+# Generated package files
+*.tar
+*.tar.gz
+*.tar.zst
+*.zip
+*.sha256
+
+# Chromium checkout/builds
+chromium/
 src/
-depot_tools/
 out/
-.cipd/
+depot_tools/
 
-# Build outputs
-*.ninja
-*.ninja_deps
-*.ninja_log
-.gclient_entries
+# Build metadata generated locally
+manifests/
+*.manifest.json
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
+# OS/editor
 .DS_Store
-Thumbs.db
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-
-# Temporary files
-*.tmp
-*.temp
-
-# Local files
-*.local.json
+.idea/
+.vscode/
+*.swp
